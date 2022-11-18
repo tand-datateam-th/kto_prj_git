@@ -136,7 +136,7 @@ class CheckDate():
     def __init__(self):
         pass
     
-    def check_date_return_pickle(e_date, s_date = '20220510'):
+    def check_date_return_pickle(e_date, s_date = '20220518'):
         lst_json_date_x = []
         lst_json_date_o = []
         lst_pickle_date_o = []
@@ -184,7 +184,7 @@ class ReadFile():
     def __init__(self):
         pass
 
-    def read_pickle(e_date, s_date = '20220510', input_path = input_path):
+    def read_pickle(e_date, s_date = '20220518', input_path = input_path):
         lst = []
         df_list = []
         _today = datetime.strptime(e_date, '%Y%m%d') + timedelta(days = 1) 
