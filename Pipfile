@@ -1,0 +1,11 @@
+[[source]]
+name = "pypi"
+url = “http://dev.tand.kr:9999/repository/pypi/simple”
+verify_ssl = false
+
+[dev-packages]
+
+[packages]
+
+[requires]
+python_version = "3.6"
