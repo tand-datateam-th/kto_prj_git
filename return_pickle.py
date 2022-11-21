@@ -83,18 +83,18 @@ class Pickling():
         #### have_params: event에서 params가 비어있으면 지우는 옵션 => True이면 params가 있음을, False는 params가 없음을 의미
         if have_params == False:
             for i in list(df_target_prep.index):
-                dict_events_save[i] = []
                 for x in df_target_prep['events'][i]:
                     if x['name'] != _event:
+                        dict_events_save[i] = []
                         dict_events_save[i].append(x)
                     else:
                         pass
         
         else:
             for i in list(df_target_prep.index):
-                dict_events_save[i] = []
                 for x in df_target_prep['events'][i]:
                     if bool(x['params']) == True:
+                        dict_events_save[i] = []
                         dict_events_save[i].append(x)
                     else:
                         pass
@@ -111,6 +111,13 @@ class Pickling():
         df_output = df_output.drop(columns = 'abs_events', axis = 1)
         df_output['abs_events'] = df_output['events'].apply(lambda x : DataImport.abstract_events(x))
         df_output = df_output.set_index('index')
+
+
+        ## 11/21 추가된 부분(앞부분에서 해당 KPI_events를 지움으로써 events가 빈 리스트 값인 행 삭제하기 위한 2차 장치)
+        ### 앞선 for문에서 이미 조치를 취하였지만 제거되지 않을 상황을 대비해 2차 장치를 추가함
+        df_output = df_output[
+                        df_output['events'].apply(
+                            lambda x: False if len(x) == 0 else True)]
 
         return df_output
 
@@ -184,7 +191,7 @@ class ReadFile():
     def __init__(self):
         pass
 
-    def read_pickle(e_date, s_date = '20220518', input_path = input_path):
+    def read_pickle(e_date, s_date = '20220522', input_path = input_path):
         lst = []
         df_list = []
         _today = datetime.strptime(e_date, '%Y%m%d') + timedelta(days = 1) 
