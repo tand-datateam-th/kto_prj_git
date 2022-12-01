@@ -33,6 +33,11 @@ from SpherePackage import *
 for pkg in [SpherePackage] :
     _ = importlib.reload(pkg)
 
+sys.path.append("../src/")
+import kto_config
+
+for pkg in [kto_config] :
+    _ = importlib.reload(pkg)
 
 ############################################################
 # setting variables
@@ -44,8 +49,8 @@ input_path = "/home/das_share/analysis/data/app_log/device/kto/custom_data"
 KEY_ID_DEVICE = 'uid' # default
 KEY_ID_USER = 'user_id'
 
-e_date = '20221113' 
-today = datetime.strptime(e_date, '%Y%m%d') + timedelta(days = 1) 
+# e_date = '20221113' 
+# today = datetime.strptime(e_date, '%Y%m%d') + timedelta(days = 1) 
 
 
 ############################################################
@@ -121,7 +126,9 @@ class Pickling():
         return df_output
 
 
-    def return_pickle_file(_input_path, lst):
+    def return_pickle_file(_input_path, lst, e_date):
+        today = datetime.strptime(e_date, '%Y%m%d') + timedelta(days = 1) 
+
         for _date in lst:
             _date_prep = datetime.strptime(_date, '%Y%m%d')
 
@@ -143,6 +150,8 @@ class CheckDate():
         pass
     
     def check_date_return_pickle(e_date, s_date = '20220522'):
+        today = datetime.strptime(e_date, '%Y%m%d') + timedelta(days = 1) 
+
         lst_json_date_x = []
         lst_json_date_o = []
         lst_pickle_date_o = []
@@ -183,7 +192,7 @@ class CheckDate():
             else:
                 lst_pickle_date_o.append(p_date)
 
-        Pickling.return_pickle_file(input_path, lst = lst_pickle_date_x)
+        Pickling.return_pickle_file(input_path, lst = lst_pickle_date_x, e_date=e_date)
     
 
 class ReadFile():
