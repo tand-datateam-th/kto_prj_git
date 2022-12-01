@@ -33,6 +33,11 @@ from SpherePackage import *
 for pkg in [SpherePackage] :
     _ = importlib.reload(pkg)
 
+sys.path.append("../src/")
+import kto_config
+
+for pkg in [kto_config] :
+    _ = importlib.reload(pkg)
 
 ############################################################
 # setting variables
@@ -44,8 +49,8 @@ input_path = "/home/das_share/analysis/data/app_log/device/kto/custom_data"
 KEY_ID_DEVICE = 'uid' # default
 KEY_ID_USER = 'user_id'
 
-e_date = '20221113' 
-today = datetime.strptime(e_date, '%Y%m%d') + timedelta(days = 1) 
+# e_date = '20221113' 
+# today = datetime.strptime(e_date, '%Y%m%d') + timedelta(days = 1) 
 
 
 ############################################################
@@ -83,18 +88,18 @@ class Pickling():
         #### have_params: event에서 params가 비어있으면 지우는 옵션 => True이면 params가 있음을, False는 params가 없음을 의미
         if have_params == False:
             for i in list(df_target_prep.index):
+                dict_events_save[i] = []
                 for x in df_target_prep['events'][i]:
                     if x['name'] != _event:
-                        dict_events_save[i] = []
                         dict_events_save[i].append(x)
                     else:
                         pass
         
         else:
             for i in list(df_target_prep.index):
+                dict_events_save[i] = []
                 for x in df_target_prep['events'][i]:
                     if bool(x['params']) == True:
-                        dict_events_save[i] = []
                         dict_events_save[i].append(x)
                     else:
                         pass
@@ -113,16 +118,17 @@ class Pickling():
         df_output = df_output.set_index('index')
 
 
-        ## 11/21 추가된 부분(앞부분에서 해당 KPI_events를 지움으로써 events가 빈 리스트 값인 행 삭제하기 위한 2차 장치)
-        ### 앞선 for문에서 이미 조치를 취하였지만 제거되지 않을 상황을 대비해 2차 장치를 추가함
+        ## 2022/11/24 수정: 해당 KPI_events를 지움으로써 events가 빈 리스트 값인 행 삭제
         df_output = df_output[
-                        df_output['events'].apply(
+                         df_output['events'].apply(
                             lambda x: False if len(x) == 0 else True)]
 
         return df_output
 
 
-    def return_pickle_file(_input_path, lst):
+    def return_pickle_file(_input_path, lst, e_date):
+        today = datetime.strptime(e_date, '%Y%m%d') + timedelta(days = 1) 
+
         for _date in lst:
             _date_prep = datetime.strptime(_date, '%Y%m%d')
 
@@ -133,7 +139,7 @@ class Pickling():
                         platform_total = True, reduce_memory = True, verbose = False)
             
             df_app_log_prep = Pickling.preprocess_events(
-                                _event = 'searchMain', df_target = df_app_log)
+                                _event = 'searchMain', df_target = df_app_log, have_params = False)
 
             df_app_log_prep.to_pickle(_input_path+'/'+f'{_date}')
 
@@ -143,7 +149,9 @@ class CheckDate():
     def __init__(self):
         pass
     
-    def check_date_return_pickle(e_date, s_date = '20220518'):
+    def check_date_return_pickle(e_date, s_date = '20220522'):
+        today = datetime.strptime(e_date, '%Y%m%d') + timedelta(days = 1) 
+
         lst_json_date_x = []
         lst_json_date_o = []
         lst_pickle_date_o = []
@@ -184,7 +192,7 @@ class CheckDate():
             else:
                 lst_pickle_date_o.append(p_date)
 
-        Pickling.return_pickle_file(input_path, lst = lst_pickle_date_x)
+        Pickling.return_pickle_file(input_path, lst = lst_pickle_date_x, e_date=e_date)
     
 
 class ReadFile():
